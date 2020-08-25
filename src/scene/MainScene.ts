@@ -12,15 +12,22 @@ export class MainScene extends Phaser.Scene {
     super('MainScene');
   }
 
-  preload() {}
+  preload() {
+    this.load.atlas(
+      'female',
+      'assets/img/female.png',
+      'assets/img/female_atlas.json',
+    );
+  }
 
   create(): void {
     this.player = new Phaser.Physics.Matter.Sprite(
       this.matter.world,
       300,
       300,
-      '',
+      'female',
     );
+    this.add.existing(this.player);
     // キーイベントを登録する
     const keyMap: keyType = {
       up: Phaser.Input.Keyboard.KeyCodes.W,
