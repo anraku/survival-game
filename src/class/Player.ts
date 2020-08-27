@@ -6,6 +6,10 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     this.scene.add.existing(this);
   }
 
+  get velocity() {
+    return this.body.velocity;
+  }
+
   static preload(scene) {
     scene.load.atlas(
       'female',
@@ -16,8 +20,6 @@ export class Player extends Phaser.Physics.Matter.Sprite {
   }
 
   update() {
-    console.log('player update')
-    this.anims.play('female_idle', true);
     const speed = 2.5;
     let playerVelocity = new Phaser.Math.Vector2();
     if (this.inputKeys.left.isDown) {
@@ -35,5 +37,12 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     playerVelocity.normalize();
     playerVelocity.scale(speed);
     this.setVelocity(playerVelocity.x, playerVelocity.y);
+
+    // play animation
+    if (Math.abs(this.velocity.x) > 0.1 || Math.abs(this.velocity.y) > 0.1) {
+      this.anims.play('female_walk', true);
+    } else {
+      this.anims.play('female_idle', true);
+    }
   }
 }

@@ -11,7 +11,6 @@ export class MainScene extends Phaser.Scene {
   }
 
   create() {
-    console.log('main create')
     this.player = new Player({
       scene: this, x: 0, y: 0, texture: 'female', frame: 'townsfolk_f_idle_1'
     });
