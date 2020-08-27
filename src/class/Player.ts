@@ -1,9 +1,25 @@
 export class Player extends Phaser.Physics.Matter.Sprite {
   public inputKeys;
   constructor(data) {
-    let { scene, x, y, texture, frame } = data;
+    const { scene, x, y, texture, frame } = data;
     super(scene.matter.world, x, y, texture, frame);
     this.scene.add.existing(this);
+
+    const physics = new Phaser.Physics.Matter.MatterPhysics(scene);
+    const playerCollider = physics.bodies.circle(this.x, this.y, 12, {
+      isSensor: false,
+      label: 'playerCollider',
+    });
+    const playerSensor = physics.bodies.circle(this.x, this.y, 24, {
+      isSensor: true,
+      label: 'playerSensor',
+    });
+    const compoundBody = physics.body.create({
+      parts: [playerCollider, playerSensor],
+      frictionAir: 0.35,
+    });
+    this.setExistingBody(compoundBody);
+    this.setFixedRotation();
   }
 
   get velocity() {
@@ -21,7 +37,7 @@ export class Player extends Phaser.Physics.Matter.Sprite {
 
   update() {
     const speed = 2.5;
-    let playerVelocity = new Phaser.Math.Vector2();
+    const playerVelocity = new Phaser.Math.Vector2();
     if (this.inputKeys.left.isDown) {
       playerVelocity.x = -1;
     }
