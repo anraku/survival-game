@@ -16,6 +16,7 @@
   },
   "rules": {
     "prettier/prettier": "error",
-    "no-return-assign": ["off"]
+    "no-return-assign": ["off"],
+    "@typescript-eslint/explicit-module-boundary-types": "off"
   }
 }

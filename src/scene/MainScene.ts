@@ -7,11 +7,11 @@ export class MainScene extends Phaser.Scene {
     super('MainScene');
   }
 
-  preload(): void {
+  preload() {
     Player.preload(this);
   }
 
-  create(): void {
+  create() {
     this.player = new Player({
       scene: this,
       x: 100,
@@ -36,7 +36,7 @@ export class MainScene extends Phaser.Scene {
     this.player.inputKeys = this.input.keyboard.addKeys(keyMap);
   }
 
-  update(): void {
+  update() {
     this.player.update();
   }
 }
