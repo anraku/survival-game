@@ -6,10 +6,10 @@
     "sourceMap": true,
     "noImplicitAny": false,
     "skipLibCheck": true,
+    "allowJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*"]
 }

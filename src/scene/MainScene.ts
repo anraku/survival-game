@@ -2,27 +2,38 @@ import { Player } from '../class/Player';
 
 export class MainScene extends Phaser.Scene {
   private player: Player;
-  private testPlayer: Player;
   constructor() {
     super('MainScene');
   }
 
   preload() {
     Player.preload(this);
+    this.load.image('tiles', 'assets/img/RPG Nature Tileset.png');
+    this.load.tilemapTiledJSON('map', 'assets/img/map.json');
   }
 
   create() {
+    // マップを追加
+    const map = this.add.tilemap('map');
+    const tileset = map.addTilesetImage(
+      'RPG Nature Tileset',
+      'tiles',
+      32,
+      32,
+      0,
+      0,
+    );
+    const layer1 = map.createStaticLayer('Tile Layer 1', tileset, 0, 0);
+    const layer2 = map.createStaticLayer('Tile Layer 2', tileset, 0, 0);
+    layer1.setCollisionByProperty({ collides: true });
+    this.matter.world.convertTilemapLayer(layer1);
+    layer2.setCollisionByProperty({ collides: true });
+    this.matter.world.convertTilemapLayer(layer2);
+
     this.player = new Player({
       scene: this,
       x: 100,
       y: 100,
-      texture: 'female',
-      frame: 'townsfolk_f_idle_1',
-    });
-    this.player = new Player({
-      scene: this,
-      x: 0,
-      y: 0,
       texture: 'female',
       frame: 'townsfolk_f_idle_1',
     });
