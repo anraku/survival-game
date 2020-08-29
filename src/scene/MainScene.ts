@@ -13,8 +13,9 @@ export class MainScene extends Phaser.Scene {
   }
 
   create() {
-    // マップを追加
+    // タイルマップ追加
     const map = this.add.tilemap('map');
+    // マップイメージを追加
     const tileset = map.addTilesetImage(
       'RPG Nature Tileset',
       'tiles',
@@ -23,13 +24,17 @@ export class MainScene extends Phaser.Scene {
       0,
       0,
     );
+    // タイルマップからレイヤーを取得
     const layer1 = map.createStaticLayer('Tile Layer 1', tileset, 0, 0);
     const layer2 = map.createStaticLayer('Tile Layer 2', tileset, 0, 0);
+
+    // レイヤーマップにcollisionを追加
     layer1.setCollisionByProperty({ collides: true });
     this.matter.world.convertTilemapLayer(layer1);
     layer2.setCollisionByProperty({ collides: true });
     this.matter.world.convertTilemapLayer(layer2);
 
+    // プレイヤーを追加
     this.player = new Player({
       scene: this,
       x: 100,
@@ -37,7 +42,7 @@ export class MainScene extends Phaser.Scene {
       texture: 'female',
       frame: 'townsfolk_f_idle_1',
     });
-    // キーイベントを登録する
+    // キーイベントを登録
     const keyMap = {
       up: Phaser.Input.Keyboard.KeyCodes.W,
       down: Phaser.Input.Keyboard.KeyCodes.S,
