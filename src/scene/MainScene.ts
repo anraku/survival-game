@@ -10,6 +10,11 @@ export class MainScene extends Phaser.Scene {
     Player.preload(this);
     this.load.image('tiles', 'assets/img/RPG Nature Tileset.png');
     this.load.tilemapTiledJSON('map', 'assets/img/map.json');
+    this.load.atlas(
+      'resources',
+      'assets/img/resources.png',
+      'assets/img/resources_atlas.json',
+    );
   }
 
   create() {
@@ -31,6 +36,26 @@ export class MainScene extends Phaser.Scene {
     // レイヤーマップにcollisionを追加
     layer1.setCollisionByProperty({ collides: true });
     this.matter.world.convertTilemapLayer(layer1);
+    // マップに障害物を配置
+    const tree = new Phaser.Physics.Matter.Sprite(
+      this.matter.world,
+      150,
+      50,
+      'resources',
+      'tree',
+    );
+    const rock = new Phaser.Physics.Matter.Sprite(
+      this.matter.world,
+      150,
+      150,
+      'resources',
+      'rock',
+    );
+    tree.setStatic(true);
+    rock.setStatic(true);
+    this.add.existing(tree);
+    this.add.existing(rock);
+
     layer2.setCollisionByProperty({ collides: true });
     this.matter.world.convertTilemapLayer(layer2);
 
