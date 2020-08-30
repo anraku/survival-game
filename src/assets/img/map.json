@@ -3,7 +3,8 @@
     {
      "export":
         {
-         "target":"."
+         "format":"json",
+         "target":"map.json"
         }
     },
  "height":16,
@@ -36,9 +37,74 @@
          "width":16,
          "x":0,
          "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":5,
+         "name":"Resources",
+         "objects":[
+                {
+                 "gid":21,
+                 "height":32,
+                 "id":14,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"yOrigin",
+                         "type":"float",
+                         "value":0.8
+                        }],
+                 "rotation":0,
+                 "type":"tree",
+                 "visible":true,
+                 "width":32,
+                 "x":96,
+                 "y":352
+                }, 
+                {
+                 "gid":22,
+                 "height":32,
+                 "id":15,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"yOrigin",
+                         "type":"float",
+                         "value":0.6
+                        }],
+                 "rotation":0,
+                 "type":"bush",
+                 "visible":true,
+                 "width":32,
+                 "x":128,
+                 "y":416
+                }, 
+                {
+                 "gid":23,
+                 "height":32,
+                 "id":16,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"yOrigin",
+                         "type":"float",
+                         "value":0.6
+                        }],
+                 "rotation":0,
+                 "type":"rock",
+                 "visible":true,
+                 "width":32,
+                 "x":192,
+                 "y":384
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
         }],
- "nextlayerid":4,
- "nextobjectid":1,
+ "nextlayerid":6,
+ "nextobjectid":17,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.4.2",
@@ -69,10 +135,31 @@
                  "id":20,
                  "properties":[
                         {
-                         "name":"collides",
-                         "type":"bool",
-                         "value":true
-                        }]
+                         "name":"yOrigin",
+                         "type":"float",
+                         "value":0.8
+                        }],
+                 "type":"tree"
+                }, 
+                {
+                 "id":21,
+                 "properties":[
+                        {
+                         "name":"yOrigin",
+                         "type":"float",
+                         "value":0.6
+                        }],
+                 "type":"bush"
+                }, 
+                {
+                 "id":22,
+                 "properties":[
+                        {
+                         "name":"yOrigin",
+                         "type":"float",
+                         "value":0.6
+                        }],
+                 "type":"rock"
                 }, 
                 {
                  "id":65,
