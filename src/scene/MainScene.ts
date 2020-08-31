@@ -30,6 +30,7 @@ export class MainScene extends Phaser.Scene {
     // レイヤーマップにcollisionを追加
     layer1.setCollisionByProperty({ collides: true });
     this.matter.world.convertTilemapLayer(layer1);
+
     // マップに障害物を配置
     this.addResources();
 
@@ -58,7 +59,7 @@ export class MainScene extends Phaser.Scene {
     const resources = this.map.getObjectLayer('Resources');
     resources.objects.forEach((resource) => {
       // 各オブジェクトを取得
-      const item = new Resource({ scene: this, resource });
+      new Resource({ scene: this, resource });
     });
   }
 
