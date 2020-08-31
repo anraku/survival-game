@@ -49,7 +49,7 @@ export class MainScene extends Phaser.Scene {
       x: 100,
       y: 100,
       texture: 'female',
-      frame: 'townsfolk_f_idle_1',
+      frame: 'townsfolk_m_idle_1',
     });
     // キーイベントを登録
     const keyMap = {
