@@ -40,8 +40,8 @@ export class MainScene extends Phaser.Scene {
     // プレイヤーを追加
     this.player = new Player({
       scene: this,
-      x: 100,
-      y: 100,
+      x: 200,
+      y: 220,
       texture: 'female',
       frame: 'townsfolk_m_idle_1',
     });
