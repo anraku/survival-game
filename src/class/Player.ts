@@ -1,3 +1,5 @@
+import { Resource } from './Resource';
+
 export class Player extends Phaser.Physics.Matter.Sprite {
   // キーイベント
   public inputKeys;
@@ -5,6 +7,9 @@ export class Player extends Phaser.Physics.Matter.Sprite {
   // 武器
   private spriteWeapon: Phaser.GameObjects.Sprite;
   private weaponRotation: number;
+
+  // 触れているオブジェクト
+  private touching: Resource[];
 
   constructor(data) {
     // プレイヤーを初期化
@@ -38,6 +43,8 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     // 当たり判定やセンサーをプレイヤーに登録
     this.setExistingBody(compoundBody);
     this.setFixedRotation();
+    this.touching = [];
+    this.CreateMiningCollisions();
 
     this.scene.input.on('pointermove', (pointer) => this.setFlipX(pointer.worldX < this.x));
   }
@@ -100,5 +107,29 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     } else {
       this.spriteWeapon.setAngle(this.weaponRotation);
     }
+  }
+
+  CreateMiningCollisions() {
+    this.world.on(
+      'collisionstart',
+      (event) => {
+        const pair = event.pairs[0];
+        const resource = pair.gameObjectA;
+        if (!pair.bodyB.isSensor) return;
+        this.touching.push(resource);
+        console.log(this.touching.length, resource.name);
+      },
+      this.scene,
+    );
+
+    this.world.on(
+      'collisionend',
+      (event) => {
+        const resource = event.pairs[0].gameObjectA;
+        this.touching = this.touching.filter((obj) => obj != resource);
+        console.log(this.touching.length);
+      },
+      this.scene,
+    );
   }
 }
