@@ -4,13 +4,22 @@ type Props = {
 };
 
 export class Resource extends Phaser.Physics.Matter.Sprite {
+  // オブジェクトが持つ効果音
+  private sound: Phaser.Sound.BaseSound;
+  private health: number;
   static preload(scene) {
-    scene.load.atlas('resources', 'assets/img/resources.png', 'assets/img/resources_atlas.json');
+    scene.load.atlas('resources', 'assets/images/resources.png', 'assets/images/resources_atlas.json');
+    scene.load.audio('tree', 'assets/audio/tree.mp3');
+    scene.load.audio('rock', 'assets/audio/rock.mp3');
+    scene.load.audio('bush', 'assets/audio/bush.mp3');
   }
 
   constructor(data: Props) {
     const { scene, resource } = data;
     super(scene.matter.world, resource.x, resource.y, 'resources', resource.type);
+    this.name = resource.type;
+    this.health = 5;
+    this.sound = this.scene.sound.add(this.name);
     // オブジェクトを画面に表示する
     this.scene.add.existing(this);
 
@@ -33,5 +42,15 @@ export class Resource extends Phaser.Physics.Matter.Sprite {
     this.setStatic(true);
     // オブジェクトを描画する座標を調整する
     this.setOrigin(0.5, yOrigin);
+  }
+
+  get dead() {
+    return this.health <= 0;
+  }
+
+  hit() {
+    if (this.sound) this.sound.play();
+    this.health -= 1;
+    console.log('health: ', this.health);
   }
 }

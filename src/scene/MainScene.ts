@@ -11,8 +11,8 @@ export class MainScene extends Phaser.Scene {
   preload() {
     // initial player
     Player.preload(this);
-    this.load.image('tiles', 'assets/img/RPG Nature Tileset.png');
-    this.load.tilemapTiledJSON('map', 'assets/img/map.json');
+    this.load.image('tiles', 'assets/images/RPG Nature Tileset.png');
+    this.load.tilemapTiledJSON('map', 'assets/images/map.json');
 
     // initial resource
     Resource.preload(this);

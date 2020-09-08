@@ -54,9 +54,9 @@ export class Player extends Phaser.Physics.Matter.Sprite {
   }
 
   static preload(scene: Phaser.Scene) {
-    scene.load.atlas('female', 'assets/img/female.png', 'assets/img/female_atlas.json');
-    scene.load.animation('female', 'assets/img/female_anim.json');
-    scene.load.spritesheet('items', 'assets/img/items.png', { frameWidth: 32, frameHeight: 32 });
+    scene.load.atlas('female', 'assets/images/female.png', 'assets/images/female_atlas.json');
+    scene.load.animation('female', 'assets/images/female_anim.json');
+    scene.load.spritesheet('items', 'assets/images/items.png', { frameWidth: 32, frameHeight: 32 });
   }
 
   update() {
@@ -99,6 +99,7 @@ export class Player extends Phaser.Physics.Matter.Sprite {
       this.weaponRotation = 0;
     }
     if (this.weaponRotation > 100) {
+      this.whackStuff();
       this.weaponRotation = 0;
     }
 
@@ -107,6 +108,15 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     } else {
       this.spriteWeapon.setAngle(this.weaponRotation);
     }
+  }
+
+  whackStuff() {
+    this.touching = this.touching.filter((obj) => obj.hit && !obj.dead);
+    this.touching.map((obj) => {
+      obj.hit();
+      if (obj.dead) obj.destroy();
+    });
+    return;
   }
 
   CreateMiningCollisions() {
