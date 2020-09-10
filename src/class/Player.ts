@@ -44,7 +44,7 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     this.setExistingBody(compoundBody);
     this.setFixedRotation();
     this.touching = [];
-    this.CreateMiningCollisions();
+    this.createMiningCollisions();
 
     this.scene.input.on('pointermove', (pointer) => this.setFlipX(pointer.worldX < this.x));
   }
@@ -91,7 +91,7 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     this.weaponRotate();
   }
 
-  weaponRotate() {
+  private weaponRotate() {
     const pointer = this.scene.input.activePointer;
     if (pointer.isDown) {
       this.weaponRotation += 6;
@@ -110,16 +110,15 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     }
   }
 
-  whackStuff() {
+  private whackStuff() {
     this.touching = this.touching.filter((obj) => obj.hit && !obj.dead);
     this.touching.map((obj) => {
       obj.hit();
       if (obj.dead) obj.destroy();
     });
-    return;
   }
 
-  CreateMiningCollisions() {
+  private createMiningCollisions() {
     this.world.on(
       'collisionstart',
       (event) => {

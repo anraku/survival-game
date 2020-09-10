@@ -1,3 +1,5 @@
+import { DropItem } from './DropItem';
+
 type Props = {
   scene: Phaser.Scene;
   resource: Phaser.Types.Tilemaps.TiledObject;
@@ -6,7 +8,10 @@ type Props = {
 export class Resource extends Phaser.Physics.Matter.Sprite {
   // オブジェクトが持つ効果音
   private sound: Phaser.Sound.BaseSound;
+  // HP
   private health: number;
+  // ドロップアイテム
+  public drops: string[];
   static preload(scene) {
     scene.load.atlas('resources', 'assets/images/resources.png', 'assets/images/resources_atlas.json');
     scene.load.audio('tree', 'assets/audio/tree.mp3');
@@ -19,6 +24,7 @@ export class Resource extends Phaser.Physics.Matter.Sprite {
     super(scene.matter.world, resource.x, resource.y, 'resources', resource.type);
     this.name = resource.type;
     this.health = 5;
+    this.drops = JSON.parse(resource.properties.find((p) => p.name === 'drops')?.value ?? '[]');
     this.sound = this.scene.sound.add(this.name);
     // オブジェクトを画面に表示する
     this.scene.add.existing(this);
@@ -52,5 +58,8 @@ export class Resource extends Phaser.Physics.Matter.Sprite {
     if (this.sound) this.sound.play();
     this.health -= 1;
     console.log('health: ', this.health);
+    if (this.dead) {
+      this.drops.map((drop) => new DropItem({ scene: this.scene, x: this.x, y: this.y, frame: drop }));
+    }
   }
 }
