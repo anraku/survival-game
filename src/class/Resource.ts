@@ -17,6 +17,7 @@ export class Resource extends Phaser.Physics.Matter.Sprite {
     scene.load.audio('tree', 'assets/audio/tree.mp3');
     scene.load.audio('rock', 'assets/audio/rock.mp3');
     scene.load.audio('bush', 'assets/audio/bush.mp3');
+    scene.load.audio('pickup', 'assets/audio/pickup.mp3');
   }
 
   constructor(data: Props) {

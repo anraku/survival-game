@@ -44,7 +44,7 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     this.setExistingBody(compoundBody);
     this.setFixedRotation();
     this.touching = [];
-    this.createMiningCollisions();
+    this.createMiningCollisions(this);
 
     this.scene.input.on('pointermove', (pointer) => this.setFlipX(pointer.worldX < this.x));
   }
@@ -112,29 +112,36 @@ export class Player extends Phaser.Physics.Matter.Sprite {
 
   private whackStuff() {
     this.touching = this.touching.filter((obj) => obj.hit && !obj.dead);
-    this.touching.map((obj) => {
+    this.touching.forEach((obj) => {
+      if (!obj.active) return;
       obj.hit();
-      if (obj.dead) obj.destroy();
+      if (obj.dead) {
+        obj.destroy();
+      }
     });
   }
 
-  private createMiningCollisions() {
+  private createMiningCollisions(player: Player) {
     this.world.on(
       'collisionstart',
-      (event) => {
-        const pair = event.pairs[0];
-        const resource = pair.gameObjectA;
-        if (!pair.bodyB.isSensor) return;
-        this.touching.push(resource);
-        console.log(this.touching.length, resource.name);
+      (event, bodyA, bodyB) => {
+        console.log('player: ', player);
+        console.log('bodyA:', bodyA.gameObject);
+        console.log('bodyB:', bodyB.gameObject);
+        const [playerCollider, resource] =
+          player === bodyB.gameObject ? [bodyB, bodyA.gameObject] : [bodyA, bodyB.gameObject];
+        console.log('playerCollider: ', playerCollider);
+        console.log('resource: ', resource);
+        if (resource instanceof Resource) this.touching.push(resource);
+        console.log(this.touching.length, resource.name, this.touching);
       },
       this.scene,
     );
 
     this.world.on(
       'collisionend',
-      (event) => {
-        const resource = event.pairs[0].gameObjectA;
+      (event, bodyA, bodyB) => {
+        const [_, resource] = player === bodyB.gameObject ? [bodyB, bodyA.gameObject] : [bodyA, bodyB.gameObject];
         this.touching = this.touching.filter((obj) => obj != resource);
         console.log(this.touching.length);
       },
