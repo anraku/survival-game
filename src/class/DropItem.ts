@@ -19,22 +19,10 @@ export class DropItem extends Phaser.Physics.Matter.Sprite {
     this.setScale(0.5);
 
     this.sound = this.scene.sound.add('pickup');
-    // this.createPickupCollision();
   }
 
   pickup = () => {
     this.destroy();
     this.sound.play();
-  };
-
-  createPickupCollision = () => {
-    this.world.on(
-      'collisionstart',
-      (event) => {
-        console.log(event);
-        // event.pairs[0].gameObjectA?.pickup();
-      },
-      this.scene,
-    );
   };
 }

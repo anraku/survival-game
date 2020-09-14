@@ -1,4 +1,5 @@
 import { Resource } from './Resource';
+import { DropItem } from './DropItem';
 
 export class Player extends Phaser.Physics.Matter.Sprite {
   // キーイベント
@@ -13,8 +14,8 @@ export class Player extends Phaser.Physics.Matter.Sprite {
 
   constructor(data) {
     // プレイヤーを初期化
+    super(data.scene.matter.world, data.x, data.y, data.texture, data.frame);
     const { scene, x, y, texture, frame } = data;
-    super(scene.matter.world, x, y, texture, frame);
     // プレイヤーをシーンに追加
     this.scene.add.existing(this);
 
@@ -45,6 +46,7 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     this.setFixedRotation();
     this.touching = [];
     this.createMiningCollisions(this);
+    this.createPickupCollision(this);
 
     this.scene.input.on('pointermove', (pointer) => this.setFlipX(pointer.worldX < this.x));
   }
@@ -122,18 +124,16 @@ export class Player extends Phaser.Physics.Matter.Sprite {
   }
 
   private createMiningCollisions(player: Player) {
+    // 衝突するインスタンスを知った上でロジックを組んでいるので、他のリソースが絡んだりした場合は修正が大変になる
+    //FIXME: 衝突したのがResourceのインスタンス出なかった場合、他にResourceと接していたとしてもtouchingに追加されない
     this.world.on(
       'collisionstart',
       (event, bodyA, bodyB) => {
-        console.log('player: ', player);
-        console.log('bodyA:', bodyA.gameObject);
-        console.log('bodyB:', bodyB.gameObject);
         const [playerCollider, resource] =
           player === bodyB.gameObject ? [bodyB, bodyA.gameObject] : [bodyA, bodyB.gameObject];
-        console.log('playerCollider: ', playerCollider);
-        console.log('resource: ', resource);
-        if (resource instanceof Resource) this.touching.push(resource);
-        console.log(this.touching.length, resource.name, this.touching);
+        if (!(resource instanceof Resource)) return;
+        if (!playerCollider.isSensor) return;
+        this.touching.push(resource);
       },
       this.scene,
     );
@@ -148,4 +148,19 @@ export class Player extends Phaser.Physics.Matter.Sprite {
       this.scene,
     );
   }
+
+  private createPickupCollision = (player: Player) => {
+    this.world.on(
+      'collisionstart',
+      (event, bodyA, bodyB) => {
+        const item = player === bodyB.gameObject ? bodyA.gameObject : bodyB.gameObject;
+        if (!(item instanceof DropItem)) return;
+        console.log('item', item);
+        if (item.pickup) {
+          item.pickup();
+        }
+      },
+      this.scene,
+    );
+  };
 }
