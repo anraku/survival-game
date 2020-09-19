@@ -1,17 +1,12 @@
 import { DropItem } from './DropItem';
+import MatterEntity from './MatterEntity';
 
 type Props = {
   scene: Phaser.Scene;
   resource: Phaser.Types.Tilemaps.TiledObject;
 };
 
-export class Resource extends Phaser.Physics.Matter.Sprite {
-  // オブジェクトが持つ効果音
-  private sound: Phaser.Sound.BaseSound;
-  // HP
-  private health: number;
-  // ドロップアイテム
-  public drops: string[];
+export class Resource extends MatterEntity {
   static preload(scene) {
     scene.load.atlas('resources', 'assets/images/resources.png', 'assets/images/resources_atlas.json');
     scene.load.audio('tree', 'assets/audio/tree.mp3');
@@ -21,13 +16,17 @@ export class Resource extends Phaser.Physics.Matter.Sprite {
   }
 
   constructor(data: Props) {
-    super(data.scene.matter.world, data.resource.x, data.resource.y, 'resources', data.resource.type);
-    this.name = data.resource.type;
-    this.health = 5;
+    super({
+      scene: data.scene.matter.world,
+      x: data.resource.x,
+      y: data.resource.y,
+      texture: 'resources',
+      frame: data.resource.type,
+      health: 5,
+      name: data.resource.type,
+    });
     this.drops = JSON.parse(data.resource.properties.find((p) => p.name === 'drops')?.value ?? '[]');
-    this.sound = this.scene.sound.add(this.name);
-    // オブジェクトを画面に表示する
-    this.scene.add.existing(this);
+    this.depth = JSON.parse(data.resource.properties.find((p) => p.name === 'depth')?.value ?? 1);
 
     // オブジェクトのColliderを丸くする
     const physics = new Phaser.Physics.Matter.MatterPhysics(this.scene);
@@ -40,8 +39,6 @@ export class Resource extends Phaser.Physics.Matter.Sprite {
     this.name = data.resource.type;
     // オブジェクトのColliderの位置を調整する
     const yOrigin: number = data.resource.properties.find((p) => p.name === 'yOrigin').value ?? 0.5;
-    this.x += this.width / 2;
-    this.y -= this.height / 2;
     this.y = this.y + this.height * (yOrigin - 0.5);
 
     // オブジェクトの位置を固定する
@@ -49,17 +46,4 @@ export class Resource extends Phaser.Physics.Matter.Sprite {
     // オブジェクトを描画する座標を調整する
     this.setOrigin(0.5, yOrigin);
   }
-
-  get dead() {
-    return this.health <= 0;
-  }
-
-  hit = () => {
-    if (this.sound) this.sound.play();
-    this.health -= 1;
-    console.log('health: ', this.health);
-    if (this.dead) {
-      this.drops.map((drop) => new DropItem({ scene: this.scene, x: this.x, y: this.y, frame: drop }));
-    }
-  };
 }

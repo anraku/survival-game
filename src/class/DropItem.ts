@@ -10,7 +10,6 @@ export class DropItem extends Phaser.Physics.Matter.Sprite {
 
   constructor(data: Props) {
     super(data.scene.matter.world, data.x, data.y, 'items', data.frame);
-    const { scene, x, y, frame } = data;
     this.scene.add.existing(this);
     const physics = new Phaser.Physics.Matter.MatterPhysics(this.scene);
     const circleCollier = physics.bodies.circle(this.x, this.y, 10, { isSensor: false, label: 'collider' });
@@ -21,6 +20,9 @@ export class DropItem extends Phaser.Physics.Matter.Sprite {
     this.sound = this.scene.sound.add('pickup');
   }
 
+  /**
+   * プレイヤーがドロップアイテムを取得した時に実行する関数
+   */
   pickup = () => {
     this.destroy();
     this.sound.play();

@@ -1,7 +1,15 @@
 import { Resource } from './Resource';
-import { DropItem } from './DropItem';
+import MatterEntity from './MatterEntity';
 
-export class Player extends Phaser.Physics.Matter.Sprite {
+type Props = {
+  scene: Phaser.Scene;
+  x: number;
+  y: number;
+  texture: string;
+  frame: string;
+};
+
+export class Player extends MatterEntity {
   // キーイベント
   public inputKeys;
 
@@ -12,11 +20,19 @@ export class Player extends Phaser.Physics.Matter.Sprite {
   // 触れているオブジェクト
   private touching: Resource[];
 
-  constructor(data) {
+  constructor(data: Props) {
     // プレイヤーを初期化
-    super(data.scene.matter.world, data.x, data.y, data.texture, data.frame);
-    // プレイヤーをシーンに追加
-    this.scene.add.existing(this);
+    super({
+      scene: data.scene.matter.world,
+      x: data.x,
+      y: data.y,
+      texture: data.texture,
+      frame: data.frame,
+      health: 2,
+      drops: [],
+      name: 'player',
+    });
+    this.touching = [];
 
     // 武器を追加
     this.spriteWeapon = new Phaser.GameObjects.Sprite(this.scene, 0, 0, 'items', 162);
@@ -43,21 +59,18 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     // 当たり判定やセンサーをプレイヤーに登録
     this.setExistingBody(compoundBody);
     this.setFixedRotation();
-    this.touching = [];
     this.createMiningCollisions(playerSensor);
     this.createPickupCollision(playerCollider);
 
+    // プレイヤーの向きを調整
     this.scene.input.on('pointermove', (pointer) => this.setFlipX(pointer.worldX < this.x));
-  }
-
-  get velocity() {
-    return this.body.velocity;
   }
 
   static preload(scene: Phaser.Scene) {
     scene.load.atlas('female', 'assets/images/female.png', 'assets/images/female_atlas.json');
     scene.load.animation('female', 'assets/images/female_anim.json');
     scene.load.spritesheet('items', 'assets/images/items.png', { frameWidth: 32, frameHeight: 32 });
+    scene.load.audio('player', 'assets/audio/player.mp3');
   }
 
   update() {
@@ -92,6 +105,9 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     this.weaponRotate();
   }
 
+  /**
+   * 左クリックのイベントを検知してツルハシを振り下ろす
+   */
   weaponRotate = () => {
     const pointer = this.scene.input.activePointer;
     if (pointer.isDown) {
@@ -111,7 +127,11 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     }
   };
 
+  /**
+   * ツルハシを振り下ろした後のイベント
+   */
   whackStuff = () => {
+    this.sound.play();
     this.touching = this.touching.filter((obj) => obj.hit && !obj.dead);
     this.touching.forEach((obj) => {
       if (!obj.active) return;
@@ -122,6 +142,10 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     });
   };
 
+  /**
+   * プレイヤーがドロップアイテムに接した時に実行するイベント
+   * @param playerCollier
+   */
   createPickupCollision = (playerCollier: MatterJS.BodyType) => {
     (this as any).scene.matterColision.addOnCollideStart({
       objectA: [playerCollier],
@@ -140,6 +164,10 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     });
   };
 
+  /**
+   * プレイヤーがリソースに接した時に実行するイベント
+   * @param playerSensor
+   */
   createMiningCollisions = (playerSensor: MatterJS.BodyType) => {
     (this as any).scene.matterColision.addOnCollideStart({
       objectA: [playerSensor],
