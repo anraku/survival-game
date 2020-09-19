@@ -15,7 +15,6 @@ export class Player extends Phaser.Physics.Matter.Sprite {
   constructor(data) {
     // プレイヤーを初期化
     super(data.scene.matter.world, data.x, data.y, data.texture, data.frame);
-    const { scene, x, y, texture, frame } = data;
     // プレイヤーをシーンに追加
     this.scene.add.existing(this);
 
@@ -26,7 +25,7 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     this.scene.add.existing(this.spriteWeapon);
 
     // 当たり判定のある円を登録
-    const physics = new Phaser.Physics.Matter.MatterPhysics(scene);
+    const physics = new Phaser.Physics.Matter.MatterPhysics(data.scene);
     const playerCollider = physics.bodies.circle(this.x, this.y, 12, {
       isSensor: false,
       label: 'playerCollider',
@@ -45,8 +44,8 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     this.setExistingBody(compoundBody);
     this.setFixedRotation();
     this.touching = [];
-    this.createMiningCollisions(this);
-    this.createPickupCollision(this);
+    this.createMiningCollisions(playerSensor);
+    this.createPickupCollision(playerCollider);
 
     this.scene.input.on('pointermove', (pointer) => this.setFlipX(pointer.worldX < this.x));
   }
@@ -93,7 +92,7 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     this.weaponRotate();
   }
 
-  private weaponRotate() {
+  weaponRotate = () => {
     const pointer = this.scene.input.activePointer;
     if (pointer.isDown) {
       this.weaponRotation += 6;
@@ -110,9 +109,9 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     } else {
       this.spriteWeapon.setAngle(this.weaponRotation);
     }
-  }
+  };
 
-  private whackStuff() {
+  whackStuff = () => {
     this.touching = this.touching.filter((obj) => obj.hit && !obj.dead);
     this.touching.forEach((obj) => {
       if (!obj.active) return;
@@ -121,46 +120,46 @@ export class Player extends Phaser.Physics.Matter.Sprite {
         obj.destroy();
       }
     });
-  }
+  };
 
-  private createMiningCollisions(player: Player) {
-    // 衝突するインスタンスを知った上でロジックを組んでいるので、他のリソースが絡んだりした場合は修正が大変になる
-    //FIXME: 衝突したのがResourceのインスタンス出なかった場合、他にResourceと接していたとしてもtouchingに追加されない
-    this.world.on(
-      'collisionstart',
-      (event, bodyA, bodyB) => {
-        const [playerCollider, resource] =
-          player === bodyB.gameObject ? [bodyB, bodyA.gameObject] : [bodyA, bodyB.gameObject];
-        if (!(resource instanceof Resource)) return;
-        if (!playerCollider.isSensor) return;
-        this.touching.push(resource);
+  createPickupCollision = (playerCollier: MatterJS.BodyType) => {
+    (this as any).scene.matterColision.addOnCollideStart({
+      objectA: [playerCollier],
+      callback: (other) => {
+        if (other.gameObjectB?.pickup) other.gameObjectB.pickup();
       },
-      this.scene,
-    );
+      context: this.scene,
+    });
 
-    this.world.on(
-      'collisionend',
-      (event, bodyA, bodyB) => {
-        const [_, resource] = player === bodyB.gameObject ? [bodyB, bodyA.gameObject] : [bodyA, bodyB.gameObject];
-        this.touching = this.touching.filter((obj) => obj != resource);
+    (this as any).scene.matterColision.addOnCollideActive({
+      objectA: [playerCollier],
+      callback: (other) => {
+        if (other.gameObjectB?.pickup) other.gameObjectB.pickup();
+      },
+      context: this.scene,
+    });
+  };
+
+  createMiningCollisions = (playerSensor: MatterJS.BodyType) => {
+    (this as any).scene.matterColision.addOnCollideStart({
+      objectA: [playerSensor],
+      callback: (other) => {
+        console.log(other);
+        if (other.bodyB.isSensor) return;
+        if (!(other.gameObjectB instanceof Resource)) return;
+        this.touching.push(other.gameObjectB);
+        console.log(this.touching.length, other.gameObjectB.name);
+      },
+      context: this.scene,
+    });
+
+    (this as any).scene.matterColision.addOnCollideEnd({
+      objectA: [playerSensor],
+      callback: (other) => {
+        this.touching = this.touching.filter((gameObject) => gameObject != other.gameObjectB);
         console.log(this.touching.length);
       },
-      this.scene,
-    );
-  }
-
-  private createPickupCollision = (player: Player) => {
-    this.world.on(
-      'collisionstart',
-      (event, bodyA, bodyB) => {
-        const item = player === bodyB.gameObject ? bodyA.gameObject : bodyB.gameObject;
-        if (!(item instanceof DropItem)) return;
-        console.log('item', item);
-        if (item.pickup) {
-          item.pickup();
-        }
-      },
-      this.scene,
-    );
+      context: this.scene,
+    });
   };
 }

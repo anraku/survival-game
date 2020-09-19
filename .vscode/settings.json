@@ -1,3 +1,4 @@
 {
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "typescript.tsdk": "/Users/daimori/play/js/phaser-samples/survival-game/node_modules/typescript/lib"
 }

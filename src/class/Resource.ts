@@ -21,26 +21,25 @@ export class Resource extends Phaser.Physics.Matter.Sprite {
   }
 
   constructor(data: Props) {
-    const { scene, resource } = data;
-    super(scene.matter.world, resource.x, resource.y, 'resources', resource.type);
-    this.name = resource.type;
+    super(data.scene.matter.world, data.resource.x, data.resource.y, 'resources', data.resource.type);
+    this.name = data.resource.type;
     this.health = 5;
-    this.drops = JSON.parse(resource.properties.find((p) => p.name === 'drops')?.value ?? '[]');
+    this.drops = JSON.parse(data.resource.properties.find((p) => p.name === 'drops')?.value ?? '[]');
     this.sound = this.scene.sound.add(this.name);
     // オブジェクトを画面に表示する
     this.scene.add.existing(this);
 
     // オブジェクトのColliderを丸くする
     const physics = new Phaser.Physics.Matter.MatterPhysics(this.scene);
-    const circleCollider = physics.bodies.circle(resource.x, resource.y, 12, {
+    const circleCollider = physics.bodies.circle(data.resource.x, data.resource.y, 12, {
       isSensor: false,
       label: 'collider',
     });
     this.setExistingBody(circleCollider);
 
-    this.name = resource.type;
+    this.name = data.resource.type;
     // オブジェクトのColliderの位置を調整する
-    const yOrigin: number = resource.properties.find((p) => p.name === 'yOrigin').value ?? 0.5;
+    const yOrigin: number = data.resource.properties.find((p) => p.name === 'yOrigin').value ?? 0.5;
     this.x += this.width / 2;
     this.y -= this.height / 2;
     this.y = this.y + this.height * (yOrigin - 0.5);
@@ -55,12 +54,12 @@ export class Resource extends Phaser.Physics.Matter.Sprite {
     return this.health <= 0;
   }
 
-  hit() {
+  hit = () => {
     if (this.sound) this.sound.play();
     this.health -= 1;
     console.log('health: ', this.health);
     if (this.dead) {
       this.drops.map((drop) => new DropItem({ scene: this.scene, x: this.x, y: this.y, frame: drop }));
     }
-  }
+  };
 }

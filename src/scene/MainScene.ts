@@ -6,6 +6,7 @@ export class MainScene extends Phaser.Scene {
   private map: Phaser.Tilemaps.Tilemap;
   constructor() {
     super('MainScene');
+    console.log('this', this);
   }
 
   preload() {
