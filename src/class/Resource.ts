@@ -1,4 +1,3 @@
-import { DropItem } from './DropItem';
 import MatterEntity from './MatterEntity';
 
 type Props = {
@@ -7,7 +6,7 @@ type Props = {
 };
 
 export class Resource extends MatterEntity {
-  static preload(scene) {
+  static preload(scene: Phaser.Scene) {
     scene.load.atlas('resources', 'assets/images/resources.png', 'assets/images/resources_atlas.json');
     scene.load.audio('tree', 'assets/audio/tree.mp3');
     scene.load.audio('rock', 'assets/audio/rock.mp3');
@@ -17,7 +16,7 @@ export class Resource extends MatterEntity {
 
   constructor(data: Props) {
     super({
-      scene: data.scene.matter.world,
+      scene: data.scene,
       x: data.resource.x,
       y: data.resource.y,
       texture: 'resources',

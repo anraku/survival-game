@@ -1,17 +1,20 @@
 import { Player } from '../class/Player';
 import { Resource } from '../class/Resource';
+import { Enemy } from '../class/Enemy';
 
 export class MainScene extends Phaser.Scene {
   private player: Player;
   private map: Phaser.Tilemaps.Tilemap;
+  private enemies: Enemy[];
   constructor() {
     super('MainScene');
-    console.log('this', this);
+    this.enemies = [];
   }
 
   preload() {
     // initial player
     Player.preload(this);
+    Enemy.preload(this);
     this.load.image('tiles', 'assets/images/RPG Nature Tileset.png');
     this.load.tilemapTiledJSON('map', 'assets/images/map.json');
 
@@ -34,6 +37,7 @@ export class MainScene extends Phaser.Scene {
 
     // マップに障害物を配置
     this.addResources();
+    this.addEnemies();
 
     layer2.setCollisionByProperty({ collides: true });
     this.matter.world.convertTilemapLayer(layer2);
@@ -56,15 +60,28 @@ export class MainScene extends Phaser.Scene {
     this.player.inputKeys = this.input.keyboard.addKeys(keyMap);
   }
 
-  addResources() {
+  addResources = () => {
     const resources = this.map.getObjectLayer('Resources');
     resources.objects.forEach((resource) => {
+      console.log(resource);
       // 各オブジェクトを取得
       new Resource({ scene: this, resource });
     });
-  }
+  };
+
+  addEnemies = () => {
+    const enemies = this.map.getObjectLayer('Enemies');
+    enemies.objects.forEach((enemy) => {
+      // 各オブジェクトを取得
+      console.log(enemy);
+      this.enemies.push(new Enemy({ scene: this, enemy }));
+    });
+  };
 
   update() {
     this.player.update();
+    this.enemies.forEach((enemy) => {
+      enemy.update();
+    });
   }
 }

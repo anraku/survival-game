@@ -1,7 +1,7 @@
 import { DropItem } from './DropItem';
 
 type Props = {
-  scene: Phaser.Physics.Matter.World;
+  scene: Phaser.Scene;
   x: number;
   y: number;
   texture: string;
@@ -20,8 +20,7 @@ export default class MatterEntity extends Phaser.Physics.Matter.Sprite {
   private _position: Phaser.Math.Vector2;
 
   constructor(data: Props) {
-    super(data.scene, data.x, data.y, data.texture, data.frame);
-    console.log(data);
+    super(data.scene.matter.world, data.x, data.y, data.texture, data.frame);
     this.name = data.name;
     this.x += this.width / 2;
     this.y -= this.height / 2;

@@ -23,7 +23,7 @@ export class Player extends MatterEntity {
   constructor(data: Props) {
     // プレイヤーを初期化
     super({
-      scene: data.scene.matter.world,
+      scene: data.scene,
       x: data.x,
       y: data.y,
       texture: data.texture,
