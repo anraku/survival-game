@@ -25,8 +25,11 @@ export default class MatterEntity extends Phaser.Physics.Matter.Sprite {
     this.x += this.width / 2;
     this.y -= this.height / 2;
     this.health = data.health;
+    this.drops = data.drops;
     this._position = new Phaser.Math.Vector2(this.x, this.y);
     if (this.name) this.sound = this.scene.sound.add(this.name);
+    // オブジェクトの位置を固定する
+    this.setStatic(true);
     this.scene.add.existing(this);
   }
 
@@ -55,6 +58,7 @@ export default class MatterEntity extends Phaser.Physics.Matter.Sprite {
     this.health -= 1;
     console.log('health: ', this.health);
     if (this.dead) {
+      console.log(this.drops);
       this.drops.map((drop) => new DropItem({ scene: this.scene, x: this.x, y: this.y, frame: drop }));
     }
   };

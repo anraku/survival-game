@@ -40,9 +40,8 @@ export class Resource extends MatterEntity {
     const yOrigin: number = data.resource.properties.find((p) => p.name === 'yOrigin').value ?? 0.5;
     this.y = this.y + this.height * (yOrigin - 0.5);
 
-    // オブジェクトの位置を固定する
-    this.setStatic(true);
     // オブジェクトを描画する座標を調整する
     this.setOrigin(0.5, yOrigin);
+    this.setStatic(true); //NOTE: 継承元のMatterEntityに設定しているので不要なはずだが、なぜかこの行がないとオブジェクトが固定されない
   }
 }

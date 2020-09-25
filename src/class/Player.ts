@@ -174,7 +174,6 @@ export class Player extends MatterEntity {
       callback: (other) => {
         console.log(other);
         if (other.bodyB.isSensor) return;
-        if (!(other.gameObjectB instanceof Resource)) return;
         this.touching.push(other.gameObjectB);
         console.log(this.touching.length, other.gameObjectB.name);
       },
