@@ -88,5 +88,11 @@ export class Enemy extends MatterEntity {
       }
     }
     this.setFlipX(this.velocity.x < 0);
+    // play animation
+    if (Math.abs(this.velocity.x) > 0.1 || Math.abs(this.velocity.y) > 0.1) {
+      this.anims.play(`${this.name}_walk`, true);
+    } else {
+      this.anims.play(`${this.name}_idle`, true);
+    }
   }
 }
