@@ -1,6 +1,7 @@
 import { Player } from '../class/Player';
 import { Resource } from '../class/Resource';
 import { Enemy } from '../class/Enemy';
+import { GameConfig } from '../config';
 
 export class MainScene extends Phaser.Scene {
   private player: Player;
@@ -58,6 +59,11 @@ export class MainScene extends Phaser.Scene {
       right: Phaser.Input.Keyboard.KeyCodes.D,
     };
     this.player.inputKeys = this.input.keyboard.addKeys(keyMap);
+    const camera = this.cameras.main;
+    camera.zoom = 2;
+    camera.startFollow(this.player);
+    camera.setLerp(0.1, 0.1);
+    camera.setBounds(0, 0, GameConfig.width, GameConfig.height);
   }
 
   addResources = () => {

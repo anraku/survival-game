@@ -1,10 +1,11 @@
 import * as Phaser from 'phaser';
 import PhaserMatterCollisionPlugin from 'phaser-matter-collision-plugin';
 import { Scenes } from './scene';
+import { GameConfig } from './config';
 
 const config: Phaser.Types.Core.GameConfig = {
-  width: 512,
-  height: 512,
+  width: GameConfig.width,
+  height: GameConfig.height,
   backgroundColor: '#333333',
   type: Phaser.AUTO,
   parent: 'game',
@@ -15,7 +16,7 @@ const config: Phaser.Types.Core.GameConfig = {
   physics: {
     default: 'matter',
     matter: {
-      debug: true,
+      debug: false,
       gravity: {
         y: 0,
       },

@@ -28,7 +28,7 @@ export class Player extends MatterEntity {
       y: data.y,
       texture: data.texture,
       frame: data.frame,
-      health: 2,
+      health: 20,
       drops: [],
       name: 'player',
     });
@@ -63,7 +63,7 @@ export class Player extends MatterEntity {
     this.createPickupCollision(playerCollider);
 
     // プレイヤーの向きを調整
-    this.scene.input.on('pointermove', (pointer) => this.setFlipX(pointer.worldX < this.x));
+    this.scene.input.on('pointermove', (pointer) => !this.dead && this.setFlipX(pointer.worldX < this.x));
   }
 
   static preload(scene: Phaser.Scene) {
@@ -74,6 +74,7 @@ export class Player extends MatterEntity {
   }
 
   update() {
+    if (this.dead) return;
     const speed = 2.5;
     const playerVelocity = new Phaser.Math.Vector2();
     if (this.inputKeys.left.isDown) {
@@ -188,5 +189,12 @@ export class Player extends MatterEntity {
       },
       context: this.scene,
     });
+  };
+
+  onDeath = () => {
+    this.anims.stop();
+    this.setTexture('items', 0);
+    this.setOrigin(0.5);
+    this.spriteWeapon.destroy();
   };
 }

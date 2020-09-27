@@ -39,7 +39,7 @@ export class Enemy extends MatterEntity {
       label: 'enemyCollider',
     });
     // 当たり判定のない円を登録
-    const enemySensor = physics.bodies.circle(this.x, this.y, 80, {
+    const enemySensor = physics.bodies.circle(this.x, this.y, 60, {
       isSensor: true,
       label: 'enemySensor',
     });
@@ -55,6 +55,13 @@ export class Enemy extends MatterEntity {
       objectA: [enemySensor],
       callback: (other) => {
         if (other.gameObjectB && other.gameObjectB.name === 'player') this.attacking = other.gameObjectB;
+      },
+      context: this.scene,
+    });
+    (this.scene as any).matterColision.addOnCollideEnd({
+      objectA: [enemySensor],
+      callback: (other) => {
+        if (other.gameObjectB && other.gameObjectB.name === 'player') this.attacking = null;
       },
       context: this.scene,
     });
