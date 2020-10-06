@@ -173,7 +173,6 @@ export class Player extends MatterEntity {
     (this as any).scene.matterColision.addOnCollideStart({
       objectA: [playerSensor],
       callback: (other) => {
-        console.log(other);
         if (other.bodyB.isSensor) return;
         this.touching.push(other.gameObjectB);
         console.log(this.touching.length, other.gameObjectB.name);

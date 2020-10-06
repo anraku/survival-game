@@ -69,7 +69,6 @@ export class MainScene extends Phaser.Scene {
   addResources = () => {
     const resources = this.map.getObjectLayer('Resources');
     resources.objects.forEach((resource) => {
-      console.log(resource);
       // 各オブジェクトを取得
       new Resource({ scene: this, resource });
     });
@@ -79,7 +78,6 @@ export class MainScene extends Phaser.Scene {
     const enemies = this.map.getObjectLayer('Enemies');
     enemies.objects.forEach((enemy) => {
       // 各オブジェクトを取得
-      console.log(enemy);
       this.enemies.push(new Enemy({ scene: this, enemy }));
     });
   };

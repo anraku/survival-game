@@ -5,18 +5,21 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-  entry: './src/index.ts',
+  entry: {
+    app: './src/index.ts',
+    vendor: ['phaser'],
+  },
   output: {
     path: outputPath,
-    filename: 'bundle.js',
+    filename: '[name].bundle.js',
   },
   module: {
     rules: [
       {
         test: /\.ts$/,
-        loader: 'ts-loader',
         include: path.resolve(__dirname, 'src/'),
         exclude: '/node_modules/',
+        use: [{ loader: 'babel-loader' }, { loader: 'ts-loader' }],
       },
     ],
   },
